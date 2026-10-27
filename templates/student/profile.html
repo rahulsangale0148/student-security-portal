@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import field, csrf with context %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<section class="page-head"><h1>My profile</h1><p class="lead">You can change your name, phone and address. Student ID, course, attendance and marks are managed by the department.</p></section>
+
+<section class="two-col">
+  <article class="card">
+    <h2>Edit details</h2>
+    <form method="post" action="{{ url_for('student.profile') }}" class="stack" novalidate>
+      {{ csrf() }}
+      {{ field('full_name', 'Full name', value=form['full_name'], error=errors.full_name, autocomplete='name', maxlength=80) }}
+      {{ field('phone', 'Phone', type='tel', value=form['phone'], error=errors.phone, required=False, autocomplete='tel', maxlength=15, inputmode='tel', hint='7-15 characters: digits, spaces, + and -.') }}
+      {{ field('address', 'Address', value=form['address'], error=errors.address, required=False, autocomplete='street-address', maxlength=200) }}
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+  </article>
+  <article class="card">
+    <h2>Read-only</h2>
+    <dl class="detail-list">
+      <div><dt>Student ID</dt><dd>{{ student['student_code'] }}</dd></div>
+      <div><dt>Username</dt><dd>{{ g.user['username'] }}</dd></div>
+      <div><dt>Email</dt><dd>{{ g.user['email'] }}</dd></div>
+      <div><dt>Course</dt><dd>{{ student['course'] }}, year {{ student['year_of_study'] }}</dd></div>
+      <div><dt>Attendance</dt><dd>{{ student['attendance_pct']|round(1) }}%</dd></div>
+    </dl>
+  </article>
+</section>
+{% endblock %}

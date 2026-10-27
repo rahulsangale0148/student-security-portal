@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Students</h1></section>
+
+<section class="card">
+  <form method="get" action="{{ url_for('admin.students') }}" class="search-row" role="search">
+    <label for="q" class="sr-only">Search students</label>
+    <input id="q" name="q" type="search" value="{{ q }}" maxlength="60" placeholder="Search by name, student ID or username">
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if q %}<a class="btn btn-ghost" href="{{ url_for('admin.students') }}">Clear</a>{% endif %}
+  </form>
+
+  {% if students %}
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">Student records</caption>
+      <thead><tr><th scope="col">Student ID</th><th scope="col">Name</th><th scope="col">Username</th><th scope="col">Course</th><th scope="col" class="num">Attendance</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+      <tbody>
+      {% for s in students %}
+        <tr>
+          <td>{{ s['student_code'] }}</td>
+          <th scope="row">{{ s['full_name'] }}</th>
+          <td>{{ s['username'] }}</td>
+          <td>{{ s['course'] }}, year {{ s['year_of_study'] }}</td>
+          <td class="num">{{ s['attendance_pct']|round(1) }}%</td>
+          <td>{% if s['is_active'] %}<span class="pill pill-ok">Active</span>{% else %}<span class="pill pill-off">Disabled</span>{% endif %}</td>
+          <td><a href="{{ url_for('admin.student_detail', student_id=s['id']) }}">Open<span class="sr-only"> {{ s['full_name'] }}</span></a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif q %}
+  <p class="muted">No students match that search. Try part of a name or the student ID.</p>
+  {% else %}
+  <p class="muted">No students yet. Students appear here after they register, or run <code>flask --app app seed-demo</code> to add fictional ones.</p>
+  {% endif %}
+</section>
+{% endblock %}

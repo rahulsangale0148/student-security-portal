@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import field, csrf with context %}
+{% block title %}Student sign in{% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Student sign in</h1>
+  {% if error %}<p class="flash flash-error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('auth.login') }}" class="stack" novalidate>
+    {{ csrf() }}
+    {{ field('username', 'Username', value=username, autocomplete='username', maxlength=64) }}
+    {{ field('password', 'Password', type='password', autocomplete='current-password', maxlength=128) }}
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('auth.register') }}">Create a student account</a>. Staff? <a href="{{ url_for('auth.admin_login') }}">Admin sign in</a>.</p>
+</section>
+{% endblock %}

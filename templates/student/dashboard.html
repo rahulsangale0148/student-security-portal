@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import attendance_bar %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Hello, {{ student['full_name'] }}</h1>
+  <p class="lead">Here is your record for this term.</p>
+</section>
+
+<section class="card-grid" aria-label="Summary">
+  <article class="card">
+    <h2>Student ID</h2>
+    <p class="big">{{ student['student_code'] }}</p>
+    <p class="muted">{{ student['course'] }}, year {{ student['year_of_study'] }}</p>
+  </article>
+  <article class="card">
+    <h2>Attendance</h2>
+    <p class="big">{{ student['attendance_pct']|round(1) }}%</p>
+    {{ attendance_bar(student['attendance_pct']) }}
+    <p class="muted">{% if student['attendance_pct'] >= 75 %}You meet the 75% requirement.{% else %}Below the 75% requirement. Speak to your coordinator.{% endif %}</p>
+  </article>
+  <article class="card">
+    <h2>Overall marks</h2>
+    <p class="big">{% if overall is not none %}{{ overall }}%{% else %}No marks yet{% endif %}</p>
+    <p class="muted">{{ marks|length }} subject{{ '' if marks|length == 1 else 's' }} recorded</p>
+  </article>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <h2>Marks</h2>
+    {% if marks %}
+    <div class="table-wrap">
+      <table>
+        <caption class="sr-only">Your marks by subject</caption>
+        <thead><tr><th scope="col">Subject</th><th scope="col" class="num">Score</th><th scope="col" class="num">Out of</th></tr></thead>
+        <tbody>
+        {% for m in marks %}
+          <tr><th scope="row">{{ m['subject'] }}</th><td class="num">{{ m['score']|round(1) }}</td><td class="num">{{ m['max_score']|round(0)|int }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No marks have been recorded for you yet. They appear here once your department enters them.</p>
+    {% endif %}
+  </article>
+
+  <article class="card">
+    <h2>Notices</h2>
+    {% if notices %}
+      <ul class="notice-list">
+      {% for n in notices %}
+        <li><h3>{{ n['title'] }}</h3><p>{{ n['body'] }}</p><p class="muted">{{ n['created_at'] }}</p></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No notices right now.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="card">
+  <h2>Your details</h2>
+  <dl class="detail-list">
+    <div><dt>Name</dt><dd>{{ student['full_name'] }}</dd></div>
+    <div><dt>Phone</dt><dd>{{ student['phone'] or 'Not set' }}</dd></div>
+    <div><dt>Address</dt><dd>{{ student['address'] or 'Not set' }}</dd></div>
+    <div><dt>Email</dt><dd>{{ g.user['email'] }}</dd></div>
+  </dl>
+  <p><a class="btn btn-ghost" href="{{ url_for('student.profile') }}">Edit profile</a></p>
+</section>
+{% endblock %}

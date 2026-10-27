@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Welcome{% endblock %} - {{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  {% macro shield() %}
+  <svg class="logo" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+    <path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  {% endmacro %}
+
+  {% macro nav_link(endpoint, label) %}
+    <a href="{{ url_for(endpoint) }}"{% if request.endpoint == endpoint %} aria-current="page"{% endif %}>{{ label }}</a>
+  {% endmacro %}
+
+  {% if g.user %}
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <a class="brand" href="{{ url_for('public.home') }}">{{ shield() }}<span>Student Security Portal</span></a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
+      <nav id="site-nav" class="side-nav" aria-label="Main navigation">
+        {% if g.user['role'] == 'admin' %}
+          {{ nav_link('admin.dashboard', 'Overview') }}
+          {{ nav_link('admin.students', 'Students') }}
+          {{ nav_link('admin.notices', 'Notices') }}
+          {{ nav_link('admin.audit_log', 'Audit log') }}
+        {% else %}
+          {{ nav_link('student.dashboard', 'Dashboard') }}
+          {{ nav_link('student.profile', 'My profile') }}
+        {% endif %}
+        {{ nav_link('auth.change_password', 'Change password') }}
+        {{ nav_link('public.assessment', 'Security assessment') }}
+        <div class="side-user">
+          <span class="muted">Signed in as</span>
+          <strong>{{ g.user['username'] }}</strong>
+          <span class="role-tag">{{ g.user['role'] }}</span>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-block">Sign out</button>
+          </form>
+        </div>
+      </nav>
+    </aside>
+  {% else %}
+  <header class="public-header">
+    <a class="brand" href="{{ url_for('public.home') }}">{{ shield() }}<span>Student Security Portal</span></a>
+    <nav class="public-nav" aria-label="Main navigation">
+      {{ nav_link('public.assessment', 'Security assessment') }}
+      {{ nav_link('auth.login', 'Student sign in') }}
+      {{ nav_link('auth.admin_login', 'Admin sign in') }}
+      <a class="btn btn-primary btn-small" href="{{ url_for('auth.register') }}">Create account</a>
+    </nav>
+  </header>
+  {% endif %}
+
+  <main id="main" class="{{ 'content' if g.user else 'public-main' }}" tabindex="-1">
+    {% include '_flash.html' %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if g.user %}
+  </div>
+  {% else %}
+  <footer class="public-footer">
+    <p>{{ app_name }} is a learning project. All student records are fictional. Run it on your own computer only.</p>
+  </footer>
+  {% endif %}
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

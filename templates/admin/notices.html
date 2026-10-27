@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import field, textarea, csrf with context %}
+{% block title %}Notices{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Notices</h1><p class="lead">Notices appear on every student's dashboard. Text is shown exactly as typed; formatting codes and HTML are not interpreted.</p></section>
+<section class="two-col">
+  <article class="card">
+    <h2>Publish a notice</h2>
+    <form method="post" action="{{ url_for('admin.notices') }}" class="stack" novalidate>
+      {{ csrf() }}
+      {{ field('title', 'Title', value=form.title, error=errors.title, maxlength=80) }}
+      {{ textarea('body', 'Message', value=form.body, error=errors.body, maxlength=1000) }}
+      <button type="submit" class="btn btn-primary">Publish notice</button>
+    </form>
+  </article>
+  <article class="card">
+    <h2>Published</h2>
+    {% if notices %}
+    <ul class="notice-list">
+      {% for n in notices %}
+      <li>
+        <h3>{{ n['title'] }}</h3>
+        <p>{{ n['body'] }}</p>
+        <p class="muted">{{ n['created_at'] }}</p>
+        <form method="post" action="{{ url_for('admin.notice_delete', notice_id=n['id']) }}" data-confirm="Delete this notice?">
+          {{ csrf() }}<button type="submit" class="btn btn-danger btn-small">Delete<span class="sr-only"> {{ n['title'] }}</span></button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}<p class="muted">No notices yet. Publish the first one using the form.</p>{% endif %}
+  </article>
+</section>
+{% endblock %}

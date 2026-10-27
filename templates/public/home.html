@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <h1>A student portal built to be tested, not just used</h1>
+    <p class="lead">Check marks, attendance and notices, or manage records as an administrator. Every page is protected the way a real campus system should be, and the whole project is assessed against the OWASP Top 10:2025.</p>
+    <div class="button-row">
+      <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Student sign in</a>
+      <a class="btn btn-ghost" href="{{ url_for('auth.register') }}">Create a student account</a>
+      <a class="btn btn-ghost" href="{{ url_for('auth.admin_login') }}">Admin sign in</a>
+    </div>
+  </div>
+
+  <aside class="ledger" aria-labelledby="ledger-title">
+    <h2 id="ledger-title">Protections built in</h2>
+    <dl>
+      <div><dt>Scrypt-hashed passwords</dt><dd>A04, A07</dd></div>
+      <div><dt>Parameterized SQL queries</dt><dd>A05</dd></div>
+      <div><dt>Server-side role checks</dt><dd>A01</dd></div>
+      <div><dt>CSRF token on every form</dt><dd>A08</dd></div>
+      <div><dt>Login throttling</dt><dd>A07</dd></div>
+      <div><dt>Security headers and CSP</dt><dd>A02</dd></div>
+      <div><dt>Audit log of security events</dt><dd>A09</dd></div>
+      <div><dt>Generic error pages</dt><dd>A10</dd></div>
+    </dl>
+  </aside>
+</section>
+
+<section class="info-grid" aria-label="About this project">
+  <article class="card">
+    <h2>For students</h2>
+    <p>See your student ID, attendance, marks and the latest notices in one place. Update your phone number and address when they change.</p>
+  </article>
+  <article class="card">
+    <h2>For administrators</h2>
+    <p>Search student records, correct attendance, record marks, publish notices and review the audit log.</p>
+  </article>
+  <article class="card">
+    <h2>For testers</h2>
+    <p>The <a href="{{ url_for('public.assessment') }}">assessment page</a> lists the scope, rules and the OWASP category each control maps to.</p>
+  </article>
+</section>
+{% endblock %}

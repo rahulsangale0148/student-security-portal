@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Security assessment{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Security assessment</h1>
+  <p class="lead">This page describes how the portal is tested. It lists what to test, not what has been found. Findings belong in your own report, supported by evidence.</p>
+</section>
+
+<section class="card-grid">
+  <article class="card">
+    <h2>In scope</h2>
+    <ul class="plain-list">
+      <li>This application at <code>http://127.0.0.1:5000</code> on your own computer</li>
+      <li>Student and admin sign in, registration, profile and password change</li>
+      <li>All admin pages and every form field</li>
+      <li>Session cookie, response headers and error pages</li>
+    </ul>
+  </article>
+  <article class="card">
+    <h2>Out of scope</h2>
+    <ul class="plain-list">
+      <li>Any website or server you do not own</li>
+      <li>Denial of service or load testing</li>
+      <li>Other people's computers on your network</li>
+      <li>The separate security lab, which has its own README and runs on port 5001</li>
+    </ul>
+  </article>
+  <article class="card">
+    <h2>Rules of engagement</h2>
+    <ul class="plain-list">
+      <li>Test only on a copy you created, with fictional data</li>
+      <li>Keep Burp Suite's proxy and the portal on 127.0.0.1</li>
+      <li>Record evidence for every claim, and retest after each fix</li>
+      <li>Do not publish credentials, even test ones</li>
+    </ul>
+  </article>
+</section>
+
+<section class="card">
+  <h2>OWASP Top 10:2025 test map</h2>
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">OWASP Top 10:2025 categories, the control in this app and a suggested test</caption>
+      <thead><tr><th scope="col">ID</th><th scope="col">Category</th><th scope="col">Control in this app</th><th scope="col">What to try</th></tr></thead>
+      <tbody>
+      {% for code, name, control, test in owasp %}
+        <tr><th scope="row">{{ code }}</th><td>{{ name }}</td><td>{{ control }}</td><td>{{ test }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="hint">Source for category names: OWASP Top 10:2025 (owasp.org/Top10/2025). A control being present is not proof it works. Test it and keep the evidence.</p>
+</section>
+{% endblock %}

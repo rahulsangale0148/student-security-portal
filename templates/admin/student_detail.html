@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import field, csrf with context %}
+{% block title %}{{ student['full_name'] }}{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p><a href="{{ url_for('admin.students') }}">Back to students</a></p>
+  <h1>{{ student['full_name'] }}</h1>
+  <p class="lead">{{ student['student_code'] }}, {{ student['username'] }}, {{ student['email'] }}
+    {% if student['is_active'] %}<span class="pill pill-ok">Active</span>{% else %}<span class="pill pill-off">Disabled</span>{% endif %}</p>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <h2>Edit record</h2>
+    <form method="post" action="{{ url_for('admin.student_edit', student_id=student['id']) }}" class="stack" novalidate>
+      {{ csrf() }}
+      {{ field('full_name', 'Full name', value=form['full_name'], error=errors.full_name, maxlength=80) }}
+      {{ field('phone', 'Phone', value=form['phone'], error=errors.phone, required=False, maxlength=15) }}
+      {{ field('address', 'Address', value=form['address'], error=errors.address, required=False, maxlength=200) }}
+      <div class="field{% if errors.course %} has-error{% endif %}">
+        <label for="course">Course</label>
+        <select id="course" name="course" {% if errors.course %}aria-invalid="true" aria-describedby="course-error"{% endif %}>
+          {% for c in courses %}<option value="{{ c }}"{% if form['course'] == c %} selected{% endif %}>{{ c }}</option>{% endfor %}
+        </select>
+        {% if errors.course %}<p class="error-text" id="course-error">{{ errors.course }}</p>{% endif %}
+      </div>
+      {{ field('year_of_study', 'Year of study (1-3)', type='number', value=form['year_of_study'], error=errors.year_of_study, inputmode='numeric') }}
+      {{ field('attendance_pct', 'Attendance (%)', type='number', value=form['attendance_pct'], error=errors.attendance_pct, inputmode='decimal') }}
+      <button type="submit" class="btn btn-primary">Save record</button>
+    </form>
+  </article>
+
+  <article class="card">
+    <h2>Marks</h2>
+    {% if marks %}
+    <div class="table-wrap">
+      <table>
+        <caption class="sr-only">Marks for this student</caption>
+        <thead><tr><th scope="col">Subject</th><th scope="col" class="num">Score</th><th scope="col" class="num">Out of</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+        {% for m in marks %}
+          <tr>
+            <th scope="row">{{ m['subject'] }}</th>
+            <td class="num">{{ m['score']|round(1) }}</td>
+            <td class="num">{{ m['max_score']|round(0)|int }}</td>
+            <td>
+              <form method="post" action="{{ url_for('admin.mark_delete', student_id=student['id'], mark_id=m['id']) }}" data-confirm="Remove these marks?">
+                {{ csrf() }}<button type="submit" class="btn btn-danger btn-small">Remove<span class="sr-only"> {{ m['subject'] }}</span></button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No marks recorded yet.</p>
+    {% endif %}
+
+    <h3>Add marks</h3>
+    <form method="post" action="{{ url_for('admin.mark_add', student_id=student['id']) }}" class="stack" novalidate>
+      {{ csrf() }}
+      {{ field('subject', 'Subject', maxlength=60) }}
+      {{ field('score', 'Score', type='number', inputmode='decimal') }}
+      {{ field('max_score', 'Out of', type='number', value='100', inputmode='decimal') }}
+      <button type="submit" class="btn btn-primary">Add marks</button>
+    </form>
+  </article>
+</section>
+
+<section class="card danger-zone">
+  <h2>Account actions</h2>
+  <div class="button-row">
+    <form method="post" action="{{ url_for('admin.student_toggle_active', student_id=student['id']) }}">
+      {{ csrf() }}<button type="submit" class="btn btn-ghost">{{ 'Disable account' if student['is_active'] else 'Enable account' }}</button>
+    </form>
+    <form method="post" action="{{ url_for('admin.student_delete', student_id=student['id']) }}" data-confirm="Delete this student and all their marks? This cannot be undone.">
+      {{ csrf() }}<button type="submit" class="btn btn-danger">Delete student</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

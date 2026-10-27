@@ -1,0 +1,30 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+instance/*
+!instance/.gitkeep
+security-lab/lab.sqlite3
+*.log
+
+# Local Git metadata
+.git-project/
+
+# Local databases and secrets
+.env
+instance/*
+!instance/.gitkeep
+security-lab/lab.sqlite3
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local logs and test artifacts
+*.log
+.pytest_cache/
+.coverage
+htmlcov/

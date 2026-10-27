@@ -1,0 +1,55 @@
+{# Shared form helpers. Import with:  {% from '_macros.html' import field, csrf with context %} #}
+
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+
+{# One labelled input with hint + error text wired up for screen readers. All values are auto-escaped. #}
+{% macro field(name, label, type='text', value='', error=None, required=True, autocomplete=None, hint=None, maxlength=None, minlength=None, pattern=None, inputmode=None) %}
+{% set described = [] %}
+{% if hint %}{% set _ = described.append(name ~ '-hint') %}{% endif %}
+{% if error %}{% set _ = described.append(name ~ '-error') %}{% endif %}
+<div class="field{% if error %} has-error{% endif %}">
+  <label for="{{ name }}">{{ label }}{% if not required %} <span class="muted">(optional)</span>{% endif %}</label>
+  <div class="input-row">
+    <input id="{{ name }}" name="{{ name }}" type="{{ type }}"
+      {% if type != 'password' %}value="{{ value if value is not none else '' }}"{% endif %}
+      {% if required %}required{% endif %}
+      {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+      {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+      {% if minlength %}minlength="{{ minlength }}"{% endif %}
+      {% if pattern %}pattern="{{ pattern }}"{% endif %}
+      {% if inputmode %}inputmode="{{ inputmode }}"{% endif %}
+      {% if error %}aria-invalid="true"{% endif %}
+      {% if described %}aria-describedby="{{ described|join(' ') }}"{% endif %}>
+    {% if type == 'password' %}
+    <button type="button" class="btn btn-ghost btn-small" data-toggle-password="{{ name }}" aria-pressed="false">Show</button>
+    {% endif %}
+  </div>
+  {% if hint %}<p class="hint" id="{{ name }}-hint">{{ hint }}</p>{% endif %}
+  {% if error %}<p class="error-text" id="{{ name }}-error">{{ error }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro textarea(name, label, value='', error=None, rows=4, maxlength=None, required=True, hint=None) %}
+{% set described = [] %}
+{% if hint %}{% set _ = described.append(name ~ '-hint') %}{% endif %}
+{% if error %}{% set _ = described.append(name ~ '-error') %}{% endif %}
+<div class="field{% if error %} has-error{% endif %}">
+  <label for="{{ name }}">{{ label }}{% if not required %} <span class="muted">(optional)</span>{% endif %}</label>
+  <textarea id="{{ name }}" name="{{ name }}" rows="{{ rows }}"
+    {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+    {% if required %}required{% endif %}
+    {% if error %}aria-invalid="true"{% endif %}
+    {% if described %}aria-describedby="{{ described|join(' ') }}"{% endif %}>{{ value if value is not none else '' }}</textarea>
+  {% if hint %}<p class="hint" id="{{ name }}-hint">{{ hint }}</p>{% endif %}
+  {% if error %}<p class="error-text" id="{{ name }}-error">{{ error }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{# Attendance bar drawn as SVG so no inline style attribute is needed (the CSP forbids those). #}
+{% macro attendance_bar(pct) %}
+{% set p = pct|float %}
+<svg class="bar" viewBox="0 0 100 6" preserveAspectRatio="none" role="img" aria-label="Attendance {{ p|round(1) }} percent">
+  <rect class="bar-track" width="100" height="6"/>
+  <rect class="bar-fill {{ 'bar-ok' if p >= 75 else 'bar-low' }}" width="{{ p|round(1) }}" height="6"/>
+</svg>
+{% endmacro %}

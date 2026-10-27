@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Security Lab{% endblock %} - Security Training Lab</title>
+  <style>
+    body { margin:0; font:16px/1.55 "Segoe UI", system-ui, sans-serif; background:#0a1220; color:#dce8f8; }
+    .banner { background:#5a1d1d; color:#ffd9d9; padding:.6rem 1rem; font-weight:600; text-align:center; border-bottom:2px solid #ff8080; }
+    header, main { max-width: 980px; margin: 0 auto; padding: 1rem; }
+    header { display:flex; flex-wrap:wrap; gap:1rem; justify-content:space-between; align-items:center; }
+    a { color:#6db3ff; } h1 { margin:.2rem 0 .6rem; } code, pre { background:#152641; border-radius:6px; }
+    code { padding:.1em .4em; } pre { padding:1rem; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .tag { display:inline-block; padding:.1rem .7rem; border-radius:99px; font-weight:700; font-size:.85rem; }
+    .tag-vulnerable { background:#5a1d1d; color:#ffb0b0; border:1px solid #ff8080; }
+    .tag-fixed { background:#12392d; color:#7ff0c4; border:1px solid #3dd6a0; }
+    .card { background:#101c31; border:1px solid #213657; border-radius:10px; padding:1rem 1.25rem; margin-bottom:1rem; }
+    table { border-collapse:collapse; width:100%; } th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid #213657; overflow-wrap:anywhere; }
+    input { font:inherit; padding:.45rem .6rem; background:#0a1220; color:#dce8f8; border:1px solid #38557f; border-radius:6px; }
+    button { font:inherit; padding:.45rem .9rem; border-radius:6px; border:1px solid #38557f; background:#152641; color:#dce8f8; cursor:pointer; }
+    label { display:block; margin:.5rem 0 .2rem; font-weight:600; }
+    .row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+  </style>
+</head>
+<body>
+  <div class="banner" role="note">TRAINING LAB: deliberately vulnerable. Fictional data only. Runs on 127.0.0.1 only. Never expose this to a network.</div>
+  <header>
+    <a href="{{ url_for('index') }}"><strong>Security Training Lab</strong></a>
+    <div class="row">
+      {% if lab_user %}
+        <span>Acting as <strong>{{ lab_user['username'] }}</strong> ({{ lab_user['role'] }})</span>
+        <form method="post" action="{{ url_for('end_session') }}"><button type="submit">End session</button></form>
+      {% else %}
+        <span>Act as:</span>
+        {% for name in ['lab_student1', 'lab_student2', 'lab_admin'] %}
+        <form method="post" action="{{ url_for('act_as', username=name) }}"><button type="submit">{{ name }}</button></form>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

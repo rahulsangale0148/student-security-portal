@@ -1,0 +1,41 @@
+{% extends 'lab_base.html' %}
+{% block title %}{{ title }} ({{ kind }}){% endblock %}
+{% block content %}
+<p><a href="{{ url_for('index') }}">All exercises</a></p>
+<h1>{{ title }}</h1>
+<p>
+  {% if kind == 'vulnerable' %}<span class="tag tag-vulnerable">VULNERABLE: TRAINING ONLY</span>{% else %}<span class="tag tag-fixed">FIXED: SECURE VERSION</span>{% endif %}
+  <span class="tag">{{ owasp }}</span>
+</p>
+<p>{{ intro }}</p>
+
+{% if form %}
+<div class="card">
+  <form method="{{ form.method }}" action="{{ form.action }}">
+    {% for f in form.fields %}
+    <label for="{{ f.name }}">{{ f.label }}</label>
+    <input id="{{ f.name }}" name="{{ f.name }}" type="{{ f.type or 'text' }}" value="{{ f.value }}" autocomplete="off" size="40">
+    {% endfor %}
+    <p><button type="submit">{{ form.button }}</button></p>
+  </form>
+</div>
+{% endif %}
+
+{% if shown_sql %}<div class="card"><strong>SQL that ran</strong><pre>{{ shown_sql }}</pre></div>{% endif %}
+{% if error %}<div class="card"><pre>{{ error }}</pre></div>{% endif %}
+
+{# result is auto-escaped. result_html is only set by the VULNERABLE XSS route (a Markup object). #}
+{% if result %}<div class="card"><pre>{{ result }}</pre></div>{% endif %}
+{% if result_html %}<div class="card" id="reflected">{{ result_html }}</div>{% endif %}
+
+{% if table %}
+<div class="card">
+  {% if table.rows %}
+  <table>
+    <thead><tr>{% for c in table.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for row in table.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+  </table>
+  {% else %}<p>No rows.</p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

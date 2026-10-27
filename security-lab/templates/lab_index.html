@@ -1,0 +1,21 @@
+{% extends 'lab_base.html' %}
+{% block content %}
+<h1>Exercises</h1>
+<p>Each exercise has a deliberately <span class="tag tag-vulnerable">VULNERABLE</span> version and a <span class="tag tag-fixed">FIXED</span> version. Test the vulnerable one with Burp Suite, record what you observe, then confirm the fixed one behaves differently. Read <code>README.md</code> first.</p>
+<div class="card">
+  <table>
+
+    <thead><tr><th>OWASP 2025</th><th>Topic</th><th>Vulnerable</th><th>Fixed</th></tr></thead>
+    <tbody>
+    {% for owasp, topic, vuln, fixed, args in exercises %}
+      <tr>
+        <td>{{ owasp }}</td><td>{{ topic }}</td>
+        <td><a href="{{ url_for(vuln, **args) }}">Open</a></td>
+        <td><a href="{{ url_for(fixed, **args) }}">Open</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p>Also see <a href="{{ url_for('misconfig_dump') }}">/lab/misconfig/config-dump</a> (part of the A02 exercise, <span class="tag tag-vulnerable">VULNERABLE</span>).</p>
+{% endblock %}

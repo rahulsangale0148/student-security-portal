@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Audit log{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Audit log</h1><p class="lead">The 200 most recent security-relevant events. Passwords are never recorded.</p></section>
+<section class="card">
+  {% if entries %}
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">Audit log entries, newest first</caption>
+      <thead><tr><th scope="col">Time (UTC)</th><th scope="col">Event</th><th scope="col">User</th><th scope="col">Detail</th><th scope="col">IP</th></tr></thead>
+      <tbody>
+      {% for e in entries %}
+        <tr><td>{{ e['created_at'] }}</td><th scope="row">{{ e['event'] }}</th><td>{{ e['username'] or '-' }}</td><td>{{ e['detail'] }}</td><td>{{ e['ip'] or '-' }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<p class="muted">No events recorded yet.</p>{% endif %}
+</section>
+{% endblock %}

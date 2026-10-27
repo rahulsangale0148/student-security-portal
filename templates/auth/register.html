@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import field, csrf with context %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Create a student account</h1>
+  <p class="muted">Use fictional details if you are testing. Your student ID is assigned automatically.</p>
+  <form method="post" action="{{ url_for('auth.register') }}" class="stack" novalidate>
+    {{ csrf() }}
+    {{ field('full_name', 'Full name', value=form.full_name, error=errors.full_name, autocomplete='name', maxlength=80) }}
+    {{ field('username', 'Username', value=form.username, error=errors.username, autocomplete='username', maxlength=30, hint='3-30 letters, numbers or underscores.') }}
+    {{ field('email', 'Email address', type='email', value=form.email, error=errors.email, autocomplete='email', maxlength=254) }}
+    {{ field('password', 'Password', type='password', error=errors.password, autocomplete='new-password', maxlength=128, hint='At least 10 characters with a letter and a number.') }}
+    {{ field('confirm_password', 'Confirm password', type='password', error=errors.confirm_password, autocomplete='new-password', maxlength=128) }}
+    <button type="submit" class="btn btn-primary">Create account</button>
+  </form>
+  <p class="muted">Already registered? <a href="{{ url_for('auth.login') }}">Sign in</a>.</p>
+</section>
+{% endblock %}

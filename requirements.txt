@@ -1,0 +1,3 @@
+# Runtime dependencies. Only two, to keep the supply chain small (OWASP A03).
+Flask>=3.1,<4
+python-dotenv>=1.0,<2

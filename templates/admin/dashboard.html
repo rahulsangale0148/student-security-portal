@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Admin overview{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Admin overview</h1><p class="lead">Student records and recent security activity.</p></section>
+
+<section class="card-grid" aria-label="Summary">
+  <article class="card"><h2>Students</h2><p class="big">{{ stats['students'] }}</p><p class="muted">{{ inactive }} disabled</p></article>
+  <article class="card"><h2>Average attendance</h2><p class="big">{{ stats['avg_attendance'] }}%</p></article>
+  <article class="card"><h2>Notices</h2><p class="big">{{ notice_count }}</p></article>
+</section>
+
+<section class="card">
+  <h2>Recent security events</h2>
+  {% if recent %}
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">The eight most recent audit log entries</caption>
+      <thead><tr><th scope="col">Time (UTC)</th><th scope="col">Event</th><th scope="col">Detail</th><th scope="col">IP</th></tr></thead>
+      <tbody>
+      {% for e in recent %}
+        <tr><td>{{ e['created_at'] }}</td><th scope="row">{{ e['event'] }}</th><td>{{ e['detail'] }}</td><td>{{ e['ip'] or '-' }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p><a href="{{ url_for('admin.audit_log') }}">Open the full audit log</a></p>
+  {% else %}
+  <p class="muted">No events yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
